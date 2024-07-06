@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-	// TODO handling
-	@ExceptionHandler({ClientException.class, MethodArgumentNotValidException.class})
+	@ExceptionHandler(ClientException.class)
 	public ResponseEntity<ApiResponse<Void>> handleServerException(
 		ClientException exception
 	) {
@@ -21,6 +20,18 @@ public class ControllerExceptionHandler {
 
 		ApiResponse<Void> response = ApiResponse.fail(exception.getErrorCode());
 		return ResponseEntity.status(exception.getErrorCode().getHttpStatus()).body(response);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
+		MethodArgumentNotValidException exception
+	) {
+		log.warn("클라이언트 에러 발생", exception);
+
+		ErrorCode unknownExceptionErrorCode = ErrorCode.BAD_REQUEST;
+		// TODO: invlaid 값 보고 적당히 클라에게 메세지 보내기
+		ApiResponse<Void> response = ApiResponse.fail(unknownExceptionErrorCode);
+		return ResponseEntity.status(unknownExceptionErrorCode.getHttpStatus()).body(response);
 	}
 
 	@ExceptionHandler(ServerException.class)
