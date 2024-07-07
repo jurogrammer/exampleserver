@@ -1,5 +1,6 @@
 package juro.exampleserver.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -57,7 +58,7 @@ public class UserService {
 			.username(dto.getUsername())
 			.password(dto.getPassword())
 			.email(dto.getEmail())
-			.role(UserRole.ROLE_USER)
+			.roles(List.of(UserRole.USER))
 			.build();
 
 		User savedUser = userRepository.save(user);

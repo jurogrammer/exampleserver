@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import juro.exampleserver.dto.user.UserRole;
 import juro.exampleserver.repository.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +30,13 @@ public class ServiceUser implements UserDetails {
 			.username(user.getUsername())
 			.password(user.getPassword())
 			.email(user.getEmail())
-			.authorities(AuthorityUtils.createAuthorityList(user.getRole().name()))
+			.authorities(
+				AuthorityUtils.createAuthorityList(
+					user.getRoles()
+						.stream()
+						.map(UserRole::name)
+						.toList()
+						.toArray(new String[0])))
 			.build();
 
 	}

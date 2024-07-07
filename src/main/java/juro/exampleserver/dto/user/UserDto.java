@@ -17,7 +17,7 @@ public class UserDto {
 	private String username;
 	private String password;
 	private String email;
-	private UserRole role;
+	private List<UserRole> roles;
 
 	public static UserDto of(User user) {
 		return UserDto.builder()
@@ -25,7 +25,7 @@ public class UserDto {
 			.username(user.getUsername())
 			.password(user.getPassword())
 			.email(user.getEmail())
-			.role(user.getRole())
+			.roles(user.getRoles())
 			.build();
 	}
 }

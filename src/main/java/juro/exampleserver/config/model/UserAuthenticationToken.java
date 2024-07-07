@@ -26,6 +26,7 @@ public class UserAuthenticationToken extends AbstractAuthenticationToken {
 		this.serviceUser = serviceUser;
 		super.setDetails(details);
 		super.eraseCredentials();
+		super.setAuthenticated(true);
 	}
 
 	@Override

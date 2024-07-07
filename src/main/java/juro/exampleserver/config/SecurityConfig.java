@@ -25,8 +25,6 @@ public class SecurityConfig {
 			.authorizeHttpRequests((authorize) -> authorize
 				.requestMatchers("/v1/auth/login", "/v1/auth/register", "/h2-console/**", "/h2-console", "/error")
 				.permitAll()
-				// TODO: method 적용
-				.requestMatchers("/v1/users/{id}").hasAuthority("ROLE_USER")
 				.anyRequest()
 				.authenticated()
 			)
@@ -36,10 +34,7 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.NEVER))
 			.rememberMe(AbstractHttpConfigurer::disable)
-			.anonymous(AbstractHttpConfigurer::disable)
-
-
-		;
+			.anonymous(AbstractHttpConfigurer::disable);
 
 		return http.build();
 	}

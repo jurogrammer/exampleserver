@@ -1,6 +1,5 @@
 package juro.exampleserver.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import juro.exampleserver.config.LoginUser;
 import juro.exampleserver.controller.model.UserLoginRequest;
 import juro.exampleserver.controller.model.UserRegisterRequest;
 import juro.exampleserver.controller.model.UserResponse;
@@ -36,8 +36,7 @@ public class UserController {
 		return ApiResponse.success(userResponse);
 	}
 
-	// TODO: method 적용
-	// @PreAuthorize("hasAuthority('ROLE_USER')")
+	@LoginUser
 	@GetMapping("/v1/users/{id}")
 	public ApiResponse<UserResponse> getUser(@PathVariable Long id) {
 		UserDto user = userService.getUser(id);

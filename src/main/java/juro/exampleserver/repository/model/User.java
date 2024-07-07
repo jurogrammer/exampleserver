@@ -1,14 +1,15 @@
 package juro.exampleserver.repository.model;
 
-import jakarta.persistence.Column;
+import java.util.List;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import juro.exampleserver.dto.user.UserRole;
+import juro.exampleserver.repository.converter.EnumListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,6 @@ public class User {
 	private String password;
 	private String email;
 
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
+	@Convert(converter = EnumListConverter.class)
+	private List<UserRole> roles;
 }
