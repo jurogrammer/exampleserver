@@ -1,4 +1,4 @@
-package juro.exampleserver.config.security;
+package juro.exampleserver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,18 +20,17 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers("/v1/auth/login", "/v1/auth/register", "/v1/users/{id}").permitAll()
-				.anyRequest().authenticated()
-			)
+			// .authorizeHttpRequests((authorize) -> authorize
+			// 	.requestMatchers("/v1/auth/login", "/v1/auth/register", "/v1/users/{id}", "/h2-console/**",
+			// 		"/h2-console").permitAll()
+			// 	// .anyRequest().authenticated()
+			// )
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionFixation().migrateSession()
 				.maximumSessions(1)
 				.expiredUrl("/api/auth/login?expired")
 				.maxSessionsPreventsLogin(true))
-		// .headers(headers -> headers.frameOptions(options -> options.disable())); // For H2 console
-
-		;
+		.headers(headers -> headers.frameOptions(options -> options.disable())); // For H2 console
 
 		return http.build();
 	}
