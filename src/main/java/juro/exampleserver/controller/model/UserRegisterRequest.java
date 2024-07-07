@@ -1,21 +1,21 @@
 package juro.exampleserver.controller.model;
 
 import jakarta.validation.constraints.NotBlank;
-import juro.exampleserver.dto.user.UserCreateRequestDto;
+import juro.exampleserver.dto.user.UserRegisterRequestDto;
 import lombok.Data;
 
 @Data
-public class UserCreateRequest {
+public class UserRegisterRequest {
 	@NotBlank
-	private String nickname;
+	private String username;
 	@NotBlank
 	private String password;
 	@NotBlank
 	private String email;
 
-	public UserCreateRequestDto toDto() {
-		return UserCreateRequestDto.builder()
-			.nickname(this.nickname)
+	public UserRegisterRequestDto toDto() {
+		return UserRegisterRequestDto.builder()
+			.username(this.username)
 			.password(this.password)
 			.email(this.email)
 			.build();

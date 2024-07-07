@@ -1,42 +1,75 @@
 package juro.exampleserver.service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
-import juro.exampleserver.dto.user.UserCreateRequestDto;
+import juro.exampleserver.config.JwtUtil;
+import juro.exampleserver.dto.user.LoginRequestDto;
 import juro.exampleserver.dto.user.UserDto;
+import juro.exampleserver.dto.user.UserRegisterRequestDto;
+import juro.exampleserver.dto.user.UserRole;
 import juro.exampleserver.exception.ClientException;
 import juro.exampleserver.exception.ErrorCode;
-import juro.exampleserver.repository.UserMapper;
+import juro.exampleserver.repository.UserRepository;
+import juro.exampleserver.repository.model.User;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
-	private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+	private static final Pattern PATTERN = Pattern.compile(
+		"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$");
 
-	private final UserMapper userMapper;
+	private final UserRepository userRepository;
+	private final JwtUtil jwtUtil;
 
-	public UserDto getUser(Long id) {
+	public String login(LoginRequestDto dto) {
+		User user = userRepository.findByUsername(dto.getUsername())
+			.orElseThrow(() -> new ClientException(ErrorCode.BAD_REQUEST,
+				"credential is not correct. request=%s".formatted(dto)));
 
-		return userMapper.getUserById(id)
-			.orElseThrow(
-				() -> new ClientException(ErrorCode.BAD_REQUEST, "cannot found user. userId = %s".formatted(id)));
+		if (!dto.getPassword().equals(user.getPassword())) {
+			throw new ClientException(ErrorCode.BAD_REQUEST,
+				"credential is not correct. request=%s".formatted(dto));
+		}
+
+		return jwtUtil.generateToken(dto.getUsername());
 	}
 
-	public UserDto create(UserCreateRequestDto dto) {
-		// validatePassword(dto.getPassword());
+	public UserDto getUser(Long id) {
+		User user = userRepository.findUserById(id)
+			.orElseThrow(
+				() -> new ClientException(ErrorCode.BAD_REQUEST, "cannot found user. userId = %s".formatted(id)));
 
-		return userMapper.createUser(dto);
+		return UserDto.of(user);
+	}
+
+	public UserDto register(UserRegisterRequestDto dto) {
+		validatePassword(dto.getPassword());
+		Optional<User> findUser = userRepository.findByUsername(dto.getUsername());
+		if (findUser.isPresent()) {
+			throw new ClientException(ErrorCode.BAD_REQUEST, "username already exists");
+		}
+
+		User user = User.builder()
+			.username(dto.getUsername())
+			.password(dto.getPassword())
+			.email(dto.getEmail())
+			.roles(List.of(UserRole.USER))
+			.build();
+
+		User savedUser = userRepository.save(user);
+		return UserDto.of(savedUser);
 	}
 
 	// 비밀번호 규칙 정의 (최소 8자, 대문자, 소문자, 숫자, 특수 문자 포함)
-
 	private void validatePassword(String password) {
-		if (password == null || !pattern.matcher(password).matches()) {
-			throw new ClientException(ErrorCode.BAD_REQUEST, "invalid password. password = %s".formatted(password));
+		if (password == null || !PATTERN.matcher(password).matches()) {
+			throw new ClientException(ErrorCode.INVALID_PASSWORD,
+				"invalid password. password = %s".formatted(password));
 		}
 	}
 }

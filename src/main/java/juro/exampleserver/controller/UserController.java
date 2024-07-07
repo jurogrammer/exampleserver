@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import juro.exampleserver.controller.model.UserCreateRequest;
+import juro.exampleserver.config.LoginUser;
+import juro.exampleserver.controller.model.UserLoginRequest;
+import juro.exampleserver.controller.model.UserRegisterRequest;
 import juro.exampleserver.controller.model.UserResponse;
 import juro.exampleserver.dto.common.ApiResponse;
 import juro.exampleserver.dto.user.UserDto;
@@ -21,7 +23,21 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 	private final UserService userService;
 
-	@GetMapping("/users/{id}")
+	@PostMapping("/v1/auth/login")
+	public ApiResponse<String> login(@Valid @RequestBody UserLoginRequest request) {
+		String token = userService.login(request.toDto());
+		return ApiResponse.success(token);
+	}
+
+	@PostMapping("/v1/auth/register")
+	public ApiResponse<UserResponse> register(@Valid @RequestBody UserRegisterRequest request) {
+		UserDto user = userService.register(request.toDto());
+		UserResponse userResponse = UserResponse.of(user);
+		return ApiResponse.success(userResponse);
+	}
+
+	@LoginUser
+	@GetMapping("/v1/users/{id}")
 	public ApiResponse<UserResponse> getUser(@PathVariable Long id) {
 		UserDto user = userService.getUser(id);
 
@@ -29,10 +45,4 @@ public class UserController {
 		return ApiResponse.success(userResponse);
 	}
 
-	@PostMapping("/users")
-	public ApiResponse<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request) {
-		UserDto user = userService.create(request.toDto());
-		UserResponse userResponse = UserResponse.of(user);
-		return ApiResponse.success(userResponse);
-	}
 }
