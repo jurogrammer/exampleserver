@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
-	private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+	private static final Pattern PATTERN = Pattern.compile(
+		"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$");
 
 	private final UserMapper userMapper;
 
@@ -27,16 +27,16 @@ public class UserService {
 	}
 
 	public UserDto create(UserCreateRequestDto dto) {
-		// validatePassword(dto.getPassword());
+		validatePassword(dto.getPassword());
 
 		return userMapper.createUser(dto);
 	}
 
 	// 비밀번호 규칙 정의 (최소 8자, 대문자, 소문자, 숫자, 특수 문자 포함)
-
 	private void validatePassword(String password) {
-		if (password == null || !pattern.matcher(password).matches()) {
-			throw new ClientException(ErrorCode.BAD_REQUEST, "invalid password. password = %s".formatted(password));
+		if (password == null || !PATTERN.matcher(password).matches()) {
+			throw new ClientException(ErrorCode.INVALID_PASSWORD,
+				"invalid password. password = %s".formatted(password));
 		}
 	}
 }
