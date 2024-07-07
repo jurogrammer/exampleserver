@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import juro.exampleserver.controller.model.UserRegisterRequest;
 import juro.exampleserver.controller.model.UserLoginRequest;
+import juro.exampleserver.controller.model.UserRegisterRequest;
 import juro.exampleserver.controller.model.UserResponse;
 import juro.exampleserver.dto.common.ApiResponse;
 import juro.exampleserver.dto.user.UserDto;
@@ -23,9 +23,9 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/v1/auth/login")
-	public ApiResponse<Void> login(@Valid @RequestBody UserLoginRequest request) {
-		userService.login(request.toDto());
-		return ApiResponse.success();
+	public ApiResponse<String> login(@Valid @RequestBody UserLoginRequest request) {
+		String token = userService.login(request.toDto());
+		return ApiResponse.success(token);
 	}
 
 	@PostMapping("/v1/auth/register")

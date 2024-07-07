@@ -3,12 +3,9 @@ package juro.exampleserver.service;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import juro.exampleserver.config.JwtUtil;
 import juro.exampleserver.dto.user.LoginRequestDto;
 import juro.exampleserver.dto.user.UserDto;
 import juro.exampleserver.dto.user.UserRegisterRequestDto;
@@ -26,16 +23,19 @@ public class UserService {
 		"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$");
 
 	private final UserRepository userRepository;
-	private final AuthenticationManager authenticationManager;
-	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
 
-	public void login(LoginRequestDto dto) {
-		Authentication authenticationRequest =
-			UsernamePasswordAuthenticationToken.unauthenticated(dto.getUsername(), dto.getPassword());
-		Authentication response = this.authenticationManager.authenticate(authenticationRequest);
-		if (!response.isAuthenticated()) {
-			throw new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request=%s".formatted(dto));
+	public String login(LoginRequestDto dto) {
+		User user = userRepository.findByUsername(dto.getUsername())
+			.orElseThrow(() -> new ClientException(ErrorCode.BAD_REQUEST,
+				"credential is not correct. request=%s".formatted(dto)));
+
+		if (!dto.getPassword().equals(user.getPassword())) {
+			throw new ClientException(ErrorCode.BAD_REQUEST,
+				"credential is not correct. request=%s".formatted(dto));
 		}
+
+		return jwtUtil.generateToken(dto.getUsername());
 	}
 
 	public UserDto getUser(Long id) {
@@ -55,7 +55,7 @@ public class UserService {
 
 		User user = User.builder()
 			.username(dto.getUsername())
-			.password(passwordEncoder.encode(dto.getPassword()))
+			.password(dto.getPassword())
 			.email(dto.getEmail())
 			.role(UserRole.ROLE_USER)
 			.build();
