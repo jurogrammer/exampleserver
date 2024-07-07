@@ -1,36 +1,36 @@
 package juro.exampleserver.config;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
-	@Value("${jwt.secret}")
-	private String secretKey;
+	private final String secretKey;
+	private final long jwtExpirationInMs;
 
-	@Value("${jwt.expiration}")
-	private long jwtExpirationInMs;
+	public JwtUtil(
+		@Value("${jwt.secret}") String secretKey,
+		@Value("${jwt.expiration}") Long jwtExpirationInMs
+	) {
+		this.secretKey = secretKey;
+		this.jwtExpirationInMs = jwtExpirationInMs;
+	}
 
 	public static SecretKey generateKeyFromString(String input) {
-		try {
-			MessageDigest sha = MessageDigest.getInstance("SHA-256");
-			byte[] key = sha.digest(input.getBytes(StandardCharsets.UTF_8));
-			return new SecretKeySpec(key, 0, 32, "HmacSHA256");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
+		return Keys.hmacShaKeyFor(Base64.getUrlDecoder().decode(input));
 	}
 
 	public String generateToken(String username) {
@@ -56,6 +56,7 @@ public class JwtUtil {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 			return true;
 		} catch (Exception e) {
+			log.error("token is not valid.", e);
 			return false;
 		}
 	}
