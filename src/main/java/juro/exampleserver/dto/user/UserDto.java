@@ -2,7 +2,7 @@ package juro.exampleserver.dto.user;
 
 import java.util.List;
 
-import juro.exampleserver.repository.model.User;
+import juro.exampleserver.repository.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

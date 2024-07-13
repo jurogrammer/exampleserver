@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import juro.exampleserver.dto.user.UserRole;
-import juro.exampleserver.repository.model.User;
+import juro.exampleserver.repository.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

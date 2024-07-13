@@ -1,4 +1,4 @@
-package juro.exampleserver.controller.model;
+package juro.exampleserver.controller.model.user;
 
 import juro.exampleserver.dto.user.LoginRequestDto;
 import lombok.Data;

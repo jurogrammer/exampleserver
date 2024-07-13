@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import juro.exampleserver.config.model.ServiceUser;
-import juro.exampleserver.repository.UserRepository;
-import juro.exampleserver.repository.model.User;
+import juro.exampleserver.repository.user.UserRepository;
+import juro.exampleserver.repository.user.model.User;
 import lombok.RequiredArgsConstructor;
 
 @Service
