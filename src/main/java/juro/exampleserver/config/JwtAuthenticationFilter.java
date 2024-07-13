@@ -35,21 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String header = request.getHeader("Authorization");
 		if (header == null || !header.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-		String token = header.substring(7);
+			ServiceUser serviceUser = ServiceUser.guest();
 
-		if (!jwtUtil.validateToken(token)) {
-			throw new BadCredentialsException("Token is is invalid.");
-		}
-
-		String username = jwtUtil.getUsernameFromToken(token);
-		ServiceUser serviceUser = userDetailService.loadUserByUsername(username);
-		if (serviceUser != null) {
 			UserAuthenticationToken authenticationToken = UserAuthenticationToken.builder()
-				.serviceUser(serviceUser)
-				.credentials(token)
+				.serviceUser(ServiceUser.guest())
+				.credentials(null)
 				.authorities(serviceUser.getAuthorities())
 				.details(extractHeaders(request))
 				.build();
@@ -57,7 +47,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			SecurityContext context = SecurityContextHolder.createEmptyContext();
 			context.setAuthentication(authenticationToken);
 			SecurityContextHolder.setContext(context);
+
+			filterChain.doFilter(request, response);
+			return;
 		}
+		String token = header.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+			throw new BadCredentialsException("Token is is invalid.");
+		}
+
+		String username = jwtUtil.getUsernameFromToken(token);
+		ServiceUser serviceUser = userDetailService.loadUserByUsername(username);
+		UserAuthenticationToken authenticationToken = UserAuthenticationToken.builder()
+			.serviceUser(serviceUser)
+			.credentials(token)
+			.authorities(serviceUser.getAuthorities())
+			.details(extractHeaders(request))
+			.build();
+
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(context);
 
 		filterChain.doFilter(request, response);
 	}

@@ -24,19 +24,24 @@ public class ServiceUser implements UserDetails {
 	private String email;
 	private List<GrantedAuthority> authorities;
 
-	public static ServiceUser of(User user) {
+	public static ServiceUser user(User user) {
 		return ServiceUser.builder()
 			.id(user.getId())
 			.username(user.getUsername())
 			.password(user.getPassword())
 			.email(user.getEmail())
-			.authorities(
-				AuthorityUtils.createAuthorityList(
-					user.getRoles()
-						.stream()
-						.map(UserRole::name)
-						.toList()
-						.toArray(new String[0])))
+			.authorities(AuthorityUtils.createAuthorityList(UserRole.USER.name()))
+			.build();
+
+	}
+
+	public static ServiceUser guest() {
+		return ServiceUser.builder()
+			.id(null)
+			.username(null)
+			.password(null)
+			.email(null)
+			.authorities(AuthorityUtils.createAuthorityList(UserRole.GUEST.name()))
 			.build();
 
 	}
