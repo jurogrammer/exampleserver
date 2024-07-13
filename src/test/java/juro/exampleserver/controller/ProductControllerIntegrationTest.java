@@ -3,14 +3,12 @@ package juro.exampleserver.controller;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestClient;
 
 import juro.exampleserver.controller.model.product.ProductCreateRequest;
 import juro.exampleserver.controller.model.product.ProductResponse;
@@ -23,40 +21,48 @@ class ProductControllerIntegrationTest {
 	@LocalServerPort
 	private int port;
 
-	@Autowired
-	private TestRestTemplate restTemplate;
-
 	private String getBaseUrl() {
-		return "http://localhost:" + port + "/v1/products";
+		return "http://localhost:" + port;
 	}
 
 	@Test
 	public void testGetProduct() {
-		// Assume there's a product with id 1 for this test
-		ResponseEntity<ApiResponse> response = restTemplate.getForEntity(getBaseUrl() + "/1", ApiResponse.class);
+		// when
+		RestClient restClient = RestClient.create(getBaseUrl());
 
-		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-		ApiResponse<ProductResponse> apiResponse = response.getBody();
-		assertThat(apiResponse).isNotNull();
-		assertThat(apiResponse.getBody().getId()).isEqualTo(1);
+		ApiResponse<ProductResponse> response = restClient.get()
+			.uri(getBaseUrl() + "/v1/products/{id}", 1L)
+			.retrieve()
+			.body(new ParameterizedTypeReference<>() {
+			});
+
+		// then
+		assertThat(response).isNotNull();
+		assertThat(response.getErrorCode()).isNull();
+		assertThat(response.getBody().getId()).isEqualTo(1);
 	}
 
 	@Test
 	public void testCreateProduct() {
-		ProductCreateRequest request = new ProductCreateRequest();
-		request.setName("Test Product");
-		request.setPrice(1000L);
-		request.setQuantity(10L);
+		// given
+		ProductCreateRequest request = ProductCreateRequest.builder()
+			.name("Test Product")
+			.price(1000L)
+			.quantity(10L)
+			.build();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Type", "application/json");
+		// when
+		RestClient restClient = RestClient.create(getBaseUrl());
+		ApiResponse<ProductResponse> response = restClient.post()
+			.uri(getBaseUrl() + "/v1/products")
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(request)
+			.retrieve()
+			.body(new ParameterizedTypeReference<>() {
+			});
 
-		HttpEntity<ProductCreateRequest> entity = new HttpEntity<>(request, headers);
-		ResponseEntity<ApiResponse> response = restTemplate.postForEntity(getBaseUrl(), entity, ApiResponse.class);
-
-		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-		ApiResponse<ProductResponse> apiResponse = response.getBody();
-		assertThat(apiResponse).isNotNull();
-		assertThat(apiResponse.getBody().getName()).isEqualTo("Test Product");
+		assertThat(response).isNotNull();
+		assertThat(response.getErrorCode()).isNull();
+		assertThat(response.getBody().getName()).isEqualTo("Test Product");
 	}
 }
