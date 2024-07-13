@@ -5,11 +5,16 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import juro.exampleserver.config.model.ServiceUser;
 import juro.exampleserver.config.model.UserAuthenticationToken;
+import juro.exampleserver.dto.common.ApiResponse;
+import juro.exampleserver.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -25,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final UserDetailServiceImpl userDetailService;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	protected void doFilterInternal(
@@ -32,21 +40,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws IOException, ServletException {
+		try {
+			String header = request.getHeader("Authorization");
+			if (header == null || !header.startsWith("Bearer ")) {
+				ServiceUser serviceUser = ServiceUser.guest();
 
-		String header = request.getHeader("Authorization");
-		if (header == null || !header.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-		String token = header.substring(7);
+				UserAuthenticationToken authenticationToken = UserAuthenticationToken.builder()
+					.serviceUser(ServiceUser.guest())
+					.credentials(null)
+					.authorities(serviceUser.getAuthorities())
+					.details(extractHeaders(request))
+					.build();
 
-		if (!jwtUtil.validateToken(token)) {
-			throw new BadCredentialsException("Token is is invalid.");
-		}
+				SecurityContext context = SecurityContextHolder.createEmptyContext();
+				context.setAuthentication(authenticationToken);
+				SecurityContextHolder.setContext(context);
 
-		String username = jwtUtil.getUsernameFromToken(token);
-		ServiceUser serviceUser = userDetailService.loadUserByUsername(username);
-		if (serviceUser != null) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+			String token = header.substring(7);
+			if (!jwtUtil.validateToken(token)) {
+				throw new BadCredentialsException("Token is is invalid.");
+			}
+
+			String username = jwtUtil.getUsernameFromToken(token);
+			ServiceUser serviceUser = userDetailService.loadUserByUsername(username);
 			UserAuthenticationToken authenticationToken = UserAuthenticationToken.builder()
 				.serviceUser(serviceUser)
 				.credentials(token)
@@ -57,9 +76,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			SecurityContext context = SecurityContextHolder.createEmptyContext();
 			context.setAuthentication(authenticationToken);
 			SecurityContextHolder.setContext(context);
+
+			filterChain.doFilter(request, response);
+		} catch (AuthenticationException authenticationException) {
+			writeErrorResponse(response, ErrorCode.FORBIDDEN);
+		} catch (Exception e) {
+			writeErrorResponse(response, ErrorCode.INTERNAL_SERVER_ERROR);
+
 		}
 
-		filterChain.doFilter(request, response);
+	}
+
+	private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+		response.setStatus(errorCode.getHttpStatus().value());
+		response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+		String responseBody = objectMapper.writeValueAsString(ApiResponse.fail(errorCode));
+		response.getWriter().write(responseBody);
 	}
 
 	private Map<String, String> extractHeaders(HttpServletRequest request) {
