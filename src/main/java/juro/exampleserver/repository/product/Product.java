@@ -22,13 +22,15 @@ import lombok.NoArgsConstructor;
 public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
+	@Column(name = "user_id")
+	private Long userId;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "price")
-	private long price;
+	private Long price;
 	@Column(name = "quantity")
-	private long quantity;
+	private Long quantity;
 
 	@Enumerated(EnumType.STRING)
 	private ProductStatus status;
