@@ -2,6 +2,9 @@ package juro.exampleserver.controller;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 
 import juro.exampleserver.config.DebuggingAuth;
+import juro.exampleserver.controller.model.common.ApiResponse;
+import juro.exampleserver.controller.model.common.PageResponse;
 import juro.exampleserver.controller.model.product.ProductCreateRequest;
 import juro.exampleserver.controller.model.product.ProductResponse;
-import juro.exampleserver.dto.common.ApiResponse;
 import juro.exampleserver.repository.product.Product;
 import juro.exampleserver.repository.product.ProductRepository;
 import juro.exampleserver.repository.product.ProductStatus;
@@ -35,6 +39,11 @@ class ProductControllerIntegrationTest {
 	private String getBaseUrl() {
 		return "http://localhost:" + port;
 	}
+
+	// @BeforeEach
+	// public void beforeEach() {
+	// 	productRepository.deleteAll();
+	// }
 
 	@Test
 	@DisplayName("getProduct - product 조회 성공")
@@ -89,4 +98,57 @@ class ProductControllerIntegrationTest {
 		assertThat(response.getErrorCode()).isNull();
 		assertThat(response.getBody().getName()).isEqualTo("Test Product");
 	}
+	//
+	// @Test
+	// public void testSearchProducts() {
+	// 	// given
+	// 	Product product1 = Product.builder()
+	// 		.userId(1L)
+	// 		.name("testProduct")
+	// 		.price(1000L)
+	// 		.quantity(10L)
+	// 		.status(ProductStatus.AVAILABLE)
+	// 		.build();
+	//
+	// 	Product product2 = Product.builder()
+	// 		.userId(1L)
+	// 		.name("testProduct")
+	// 		.price(1000L)
+	// 		.quantity(10L)
+	// 		.status(ProductStatus.AVAILABLE)
+	// 		.build();
+	// 	Product product3 = Product.builder()
+	// 		.userId(1L)
+	// 		.name("testProduct")
+	// 		.price(1000L)
+	// 		.quantity(10L)
+	// 		.status(ProductStatus.AVAILABLE)
+	// 		.build();
+	//
+	// 	Product product4 = Product.builder()
+	// 		.userId(2L)
+	// 		.name("testProduct")
+	// 		.price(1000L)
+	// 		.quantity(10L)
+	// 		.status(ProductStatus.AVAILABLE)
+	// 		.build();
+	//
+	// 	productRepository.saveAll(List.of(product1, product2, product3, product4));
+	//
+	// 	String url = "/v1/products?size=2&productStatus=AVAILABLE&userId=1";
+	// 	RestClient restClient = RestClient.create(getBaseUrl());
+	//
+	// 	// when
+	// 	ApiResponse<PageResponse<ProductResponse>> response =
+	// 		restClient.get().uri(url).retrieve().body(
+	// 			new ParameterizedTypeReference<>() {
+	// 			});
+	//
+	// 	// then
+	// 	assertThat(response).isNotNull();
+	// 	PageResponse<ProductResponse> body = response.getBody();
+	// 	assertThat(body.getTotalCount()).isEqualTo(3);
+	// 	assertThat(body.getItems()).size().isEqualTo(2);
+	// 	assertThat(body.getNext()).isNotNull();
+	// }
 }

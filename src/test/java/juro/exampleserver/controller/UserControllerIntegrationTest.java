@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import juro.exampleserver.dto.common.ApiResponse;
+import juro.exampleserver.controller.model.common.ApiResponse;
 import juro.exampleserver.exception.ErrorCode;
 
 @ActiveProfiles("local")

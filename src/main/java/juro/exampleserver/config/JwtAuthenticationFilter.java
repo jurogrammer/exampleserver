@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import juro.exampleserver.config.model.ServiceUser;
 import juro.exampleserver.config.model.UserAuthenticationToken;
-import juro.exampleserver.dto.common.ApiResponse;
+import juro.exampleserver.controller.model.common.ApiResponse;
 import juro.exampleserver.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
@@ -79,8 +79,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			filterChain.doFilter(request, response);
 		} catch (AuthenticationException authenticationException) {
+			logger.error("authentication failed", authenticationException);
 			writeErrorResponse(response, ErrorCode.FORBIDDEN);
 		} catch (Exception e) {
+			logger.error("authentication failed because of unexpected error.", e);
 			writeErrorResponse(response, ErrorCode.INTERNAL_SERVER_ERROR);
 
 		}
@@ -89,7 +91,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
 		response.setStatus(errorCode.getHttpStatus().value());
-		response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
 		String responseBody = objectMapper.writeValueAsString(ApiResponse.fail(errorCode));
 		response.getWriter().write(responseBody);
 	}

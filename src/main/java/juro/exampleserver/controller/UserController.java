@@ -12,7 +12,7 @@ import juro.exampleserver.config.LoginUser;
 import juro.exampleserver.controller.model.user.UserLoginRequest;
 import juro.exampleserver.controller.model.user.UserRegisterRequest;
 import juro.exampleserver.controller.model.user.UserResponse;
-import juro.exampleserver.dto.common.ApiResponse;
+import juro.exampleserver.controller.model.common.ApiResponse;
 import juro.exampleserver.dto.user.UserDto;
 import juro.exampleserver.service.UserService;
 import lombok.RequiredArgsConstructor;

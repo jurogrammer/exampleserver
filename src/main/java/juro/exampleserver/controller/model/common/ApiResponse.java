@@ -1,4 +1,4 @@
-package juro.exampleserver.dto.common;
+package juro.exampleserver.controller.model.common;
 
 import juro.exampleserver.exception.ErrorCode;
 import lombok.Data;
