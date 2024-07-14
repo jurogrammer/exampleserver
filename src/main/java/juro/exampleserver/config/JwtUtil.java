@@ -29,9 +29,6 @@ public class JwtUtil {
 		this.jwtExpirationInMs = jwtExpirationInMs;
 	}
 
-	public static SecretKey generateKeyFromString(String input) {
-		return Keys.hmacShaKeyFor(Base64.getUrlDecoder().decode(input));
-	}
 
 	public String generateToken(String username) {
 		return Jwts.builder()
@@ -60,4 +57,9 @@ public class JwtUtil {
 			return false;
 		}
 	}
+
+	private static SecretKey generateKeyFromString(String input) {
+		return Keys.hmacShaKeyFor(Base64.getUrlDecoder().decode(input));
+	}
+
 }

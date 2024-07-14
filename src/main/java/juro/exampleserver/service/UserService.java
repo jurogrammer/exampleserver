@@ -13,8 +13,8 @@ import juro.exampleserver.dto.user.UserRegisterRequestDto;
 import juro.exampleserver.dto.user.UserRole;
 import juro.exampleserver.exception.ClientException;
 import juro.exampleserver.exception.ErrorCode;
-import juro.exampleserver.repository.UserRepository;
-import juro.exampleserver.repository.model.User;
+import juro.exampleserver.repository.user.UserRepository;
+import juro.exampleserver.repository.user.model.User;
 import lombok.RequiredArgsConstructor;
 
 @Service

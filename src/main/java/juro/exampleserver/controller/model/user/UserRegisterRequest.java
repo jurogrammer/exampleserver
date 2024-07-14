@@ -1,4 +1,4 @@
-package juro.exampleserver.controller.model;
+package juro.exampleserver.controller.model.user;
 
 import jakarta.validation.constraints.NotBlank;
 import juro.exampleserver.dto.user.UserRegisterRequestDto;

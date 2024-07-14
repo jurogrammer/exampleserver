@@ -1,4 +1,4 @@
-package juro.exampleserver.repository.model;
+package juro.exampleserver.repository.user.model;
 
 import java.util.List;
 
