@@ -1,4 +1,4 @@
-package juro.exampleserver.controller.model.common;
+package juro.exampleserver.repository.common;
 
 import java.util.List;
 
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class PageResponse<T> {
+@AllArgsConstructor
+public class PageResult<T> {
 	private List<T> items;
-	private String searchAfter;
+	private String nextSearchAfter;
 	private Long totalCount;
 }

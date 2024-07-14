@@ -1,5 +1,7 @@
 package juro.exampleserver.dto.product;
 
+import juro.exampleserver.repository.product.ProductSearchCriteria;
+import juro.exampleserver.repository.product.ProductSortType;
 import juro.exampleserver.repository.product.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +16,18 @@ public class ProductSearchRequestDto {
 	private ProductStatus productStatus;
 	private Long userId;
 	private Integer size;
-	private String next;
+	private String searchAfter;
+	private ProductSortType sort;
+	private boolean withTotalCount;
+
+	public ProductSearchCriteria toCriteria() {
+		return ProductSearchCriteria.builder()
+			.productStatus(productStatus)
+			.userId(userId)
+			.size(size)
+			.sort(sort)
+			.searchAfter(searchAfter)
+			.withTotalCount(withTotalCount)
+			.build();
+	}
 }

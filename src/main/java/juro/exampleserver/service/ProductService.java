@@ -1,7 +1,5 @@
 package juro.exampleserver.service;
 
-import java.util.Collections;
-
 import org.springframework.stereotype.Service;
 
 import juro.exampleserver.dto.comon.PageableDto;
@@ -10,8 +8,10 @@ import juro.exampleserver.dto.product.ProductDto;
 import juro.exampleserver.dto.product.ProductSearchRequestDto;
 import juro.exampleserver.exception.ClientException;
 import juro.exampleserver.exception.ErrorCode;
+import juro.exampleserver.repository.common.PageResult;
 import juro.exampleserver.repository.product.Product;
 import juro.exampleserver.repository.product.ProductRepository;
+import juro.exampleserver.repository.product.ProductSearchCriteria;
 import juro.exampleserver.repository.product.ProductStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -45,11 +45,14 @@ public class ProductService {
 	}
 
 	public PageableDto<ProductDto> searchProducts(ProductSearchRequestDto requestDto) {
+		ProductSearchCriteria criteria = requestDto.toCriteria();
+
+		PageResult<Product> search = productRepository.search(criteria);
 
 		return PageableDto.<ProductDto>builder()
-			.items(Collections.emptyList())
-			.next(null)
-			.totalCount(0L)
+			.items(search.getItems().stream().map(ProductDto::of).toList())
+			.searchAfter(search.getNextSearchAfter())
+			.totalCount(search.getTotalCount())
 			.build();
 	}
 }

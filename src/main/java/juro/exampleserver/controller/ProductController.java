@@ -21,6 +21,7 @@ import juro.exampleserver.dto.comon.PageableDto;
 import juro.exampleserver.dto.product.ProductCreateRequestDto;
 import juro.exampleserver.dto.product.ProductDto;
 import juro.exampleserver.dto.product.ProductSearchRequestDto;
+import juro.exampleserver.repository.product.ProductSortType;
 import juro.exampleserver.repository.product.ProductStatus;
 import juro.exampleserver.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -36,20 +37,24 @@ public class ProductController {
 		@RequestParam @Min(1) Integer size,
 		@RequestParam(required = false) String next,
 		@RequestParam(required = false) ProductStatus productStatus,
-		@RequestParam(required = false) Long userId
+		@RequestParam(required = false) Long userId,
+		@RequestParam ProductSortType sort,
+		@RequestParam(required = false, defaultValue = "false") boolean withTotalCount
 	) {
 		ProductSearchRequestDto requestDto = ProductSearchRequestDto.builder()
 			.productStatus(productStatus)
 			.userId(userId)
 			.size(size)
-			.next(next)
+			.searchAfter(next)
+			.sort(sort)
+			.withTotalCount(withTotalCount)
 			.build();
 
 		PageableDto<ProductDto> dto = productService.searchProducts(requestDto);
 		PageResponse<ProductResponse> response = PageResponse.<ProductResponse>builder()
 			.items(dto.getItems().stream().map(ProductResponse::of).toList())
 			.totalCount(dto.getTotalCount())
-			.next(dto.getNext())
+			.searchAfter(dto.getSearchAfter())
 			.build();
 
 		return ApiResponse.success(response);
