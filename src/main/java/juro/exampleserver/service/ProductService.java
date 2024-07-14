@@ -51,7 +51,7 @@ public class ProductService {
 
 		return PageableDto.<ProductDto>builder()
 			.items(search.getItems().stream().map(ProductDto::of).toList())
-			.searchAfter(search.getNextSearchAfter())
+			.nextSearchAfter(search.getNextSearchAfter())
 			.totalCount(search.getTotalCount())
 			.build();
 	}

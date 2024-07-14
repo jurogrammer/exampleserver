@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PageResponse<T> {
 	private List<T> items;
-	private String searchAfter;
+	private String nextSearchAfter;
 	private Long totalCount;
 }

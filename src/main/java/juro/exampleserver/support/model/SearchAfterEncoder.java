@@ -47,7 +47,6 @@ public class SearchAfterEncoder {
 	}
 	/**
 	 *
-	 * 클라가 전달한 searchAfter 값을 디코딩.
 	 *
 	 * @param encoded 인코딩된 값. searchAfter에 해당
 	 * @return values 디코딩된 값. 정렬키 목록에 해당

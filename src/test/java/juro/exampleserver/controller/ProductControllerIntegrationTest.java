@@ -139,13 +139,15 @@ class ProductControllerIntegrationTest {
 
 		productRepository.saveAll(List.of(product1, product2, product3, product4));
 
-		String url = "/v1/products?size=2&productStatus=AVAILABLE&userId=1&sort=RECENT";
+		String url = "/v1/products?size=2&productStatus=AVAILABLE&userId=1&sort=RECENT&withTotalCount=true";
 		RestClient restClient = RestClient.create(getBaseUrl());
 
 		// when
 		ApiResponse<PageResponse<ProductResponse>> response =
-			restClient.get().uri(url).retrieve().body(
-				new ParameterizedTypeReference<>() {
+			restClient.get()
+				.uri(url)
+				.retrieve()
+				.body(new ParameterizedTypeReference<>() {
 				});
 
 		// then
@@ -153,6 +155,6 @@ class ProductControllerIntegrationTest {
 		PageResponse<ProductResponse> body = response.getBody();
 		assertThat(body.getTotalCount()).isEqualTo(3);
 		assertThat(body.getItems()).size().isEqualTo(2);
-		assertThat(body.getSearchAfter()).isNotNull();
+		assertThat(body.getNextSearchAfter()).isNotNull();
 	}
 }

@@ -35,7 +35,7 @@ public class ProductController {
 	@GetMapping("/v1/products")
 	public ApiResponse<PageResponse<ProductResponse>> searchProducts(
 		@RequestParam @Min(1) Integer size,
-		@RequestParam(required = false) String next,
+		@RequestParam(required = false) String searchAfter,
 		@RequestParam(required = false) ProductStatus productStatus,
 		@RequestParam(required = false) Long userId,
 		@RequestParam ProductSortType sort,
@@ -45,7 +45,7 @@ public class ProductController {
 			.productStatus(productStatus)
 			.userId(userId)
 			.size(size)
-			.searchAfter(next)
+			.searchAfter(searchAfter)
 			.sort(sort)
 			.withTotalCount(withTotalCount)
 			.build();
@@ -54,7 +54,7 @@ public class ProductController {
 		PageResponse<ProductResponse> response = PageResponse.<ProductResponse>builder()
 			.items(dto.getItems().stream().map(ProductResponse::of).toList())
 			.totalCount(dto.getTotalCount())
-			.searchAfter(dto.getSearchAfter())
+			.nextSearchAfter(dto.getNextSearchAfter())
 			.build();
 
 		return ApiResponse.success(response);
