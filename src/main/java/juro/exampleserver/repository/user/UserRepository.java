@@ -9,6 +9,8 @@ import juro.exampleserver.repository.user.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+	boolean existsById(long id);
+
 	Optional<User> findUserById(long id);
 
 	Optional<User> findByUsername(String username);
