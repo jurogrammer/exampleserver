@@ -1,6 +1,7 @@
 package juro.exampleserver.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import juro.exampleserver.dto.comon.PageableDto;
 import juro.exampleserver.dto.product.ProductCreateRequestDto;
@@ -23,6 +24,7 @@ public class ProductService {
 	private final ProductRepository productRepository;
 	private final UserRepository userRepository;
 
+	@Transactional
 	public ProductDto createProduct(ProductCreateRequestDto requestDto) {
 		if (!userRepository.existsById(requestDto.getUserId())) {
 			throw new ClientException(ErrorCode.BAD_REQUEST,
@@ -43,6 +45,7 @@ public class ProductService {
 
 	}
 
+	@Transactional(readOnly = true)
 	public ProductDto getProduct(Long id) {
 		Product product = productRepository.findById(id)
 			.orElseThrow(
@@ -51,6 +54,7 @@ public class ProductService {
 		return ProductDto.of(product);
 	}
 
+	@Transactional(readOnly = true)
 	public PageableDto<ProductDto> searchProducts(ProductSearchRequestDto requestDto) {
 		ProductSearchCriteria criteria = requestDto.toCriteria();
 
