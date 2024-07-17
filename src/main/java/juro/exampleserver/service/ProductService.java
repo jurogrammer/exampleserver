@@ -14,7 +14,6 @@ import juro.exampleserver.repository.product.Product;
 import juro.exampleserver.repository.product.ProductRepository;
 import juro.exampleserver.repository.product.ProductSearchCriteria;
 import juro.exampleserver.repository.product.ProductStatus;
-import juro.exampleserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,14 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 
 	private final ProductRepository productRepository;
-	private final UserRepository userRepository;
+	private final UserValidator userValidator;
 
 	@Transactional
 	public ProductDto createProduct(ProductCreateRequestDto requestDto) {
-		if (!userRepository.existsById(requestDto.getUserId())) {
-			throw new ClientException(ErrorCode.BAD_REQUEST,
-				"cannot create product because user not found. userId=%s".formatted(requestDto.getUserId()));
-		}
+		userValidator.validateUserExists(requestDto.getUserId());
 
 		Product product = Product.builder()
 			.userId(requestDto.getUserId())

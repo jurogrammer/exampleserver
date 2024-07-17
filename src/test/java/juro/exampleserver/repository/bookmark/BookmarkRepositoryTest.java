@@ -57,16 +57,13 @@ public class BookmarkRepositoryTest {
 		Bookmark bookmark = Bookmark.builder()
 			.userId(user.getId())
 			.productId(product.getId())
-			.deleted(false)
 			.build();
 		Bookmark savedBookmark = bookmarkRepository.save(bookmark);
 
 		assertThat(savedBookmark.getId()).isNotNull();
 		assertThat(savedBookmark.getUserId()).isEqualTo(user.getId());
 		assertThat(savedBookmark.getProductId()).isEqualTo(product.getId());
-		assertThat(savedBookmark.isDeleted()).isFalse();
 		assertThat(savedBookmark.getCreatedAt()).isNotNull();
-		assertThat(savedBookmark.getUpdatedAt()).isNotNull();
 	}
 
 	@Test
@@ -74,7 +71,6 @@ public class BookmarkRepositoryTest {
 		Bookmark bookmark = Bookmark.builder()
 			.userId(user.getId())
 			.productId(product.getId())
-			.deleted(false)
 			.build();
 		bookmarkRepository.save(bookmark);
 
@@ -88,7 +84,6 @@ public class BookmarkRepositoryTest {
 		Bookmark bookmark = Bookmark.builder()
 			.userId(user.getId())
 			.productId(product.getId())
-			.deleted(false)
 			.build();
 		bookmarkRepository.save(bookmark);
 
@@ -103,7 +98,6 @@ public class BookmarkRepositoryTest {
 		Bookmark bookmark = Bookmark.builder()
 			.userId(user.getId())
 			.productId(product.getId())
-			.deleted(false)
 			.build();
 		bookmark = bookmarkRepository.save(bookmark);
 

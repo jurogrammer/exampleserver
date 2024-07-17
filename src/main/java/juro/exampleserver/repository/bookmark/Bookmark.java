@@ -3,7 +3,6 @@ package juro.exampleserver.repository.bookmark;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -37,14 +36,14 @@ public class Bookmark {
 	@Column(name = "product_id")
 	private Long productId;
 
-	@Column(name = "deleted")
-	private boolean deleted;
-
 	@CreatedDate
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
-	@LastModifiedDate
-	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	public static Bookmark create(Long userId, Long productId) {
+		return Bookmark.builder()
+			.userId(userId)
+			.productId(productId)
+			.build();
+	}
 }
