@@ -5,7 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import juro.exampleserver.controller.model.common.ApiResponse;
+import juro.exampleserver.controller.common.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

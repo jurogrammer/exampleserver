@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import juro.exampleserver.config.auth.JwtUtil;
+
 class JwtUtilTest {
 	private final JwtUtil sut = new JwtUtil(
 		"V1RFTEpCSlRVUkRQVVBHUFBQSE5NTk1BVlNNU0pGV0JCWUpSU0dHVVVKTFRHVk5NUUdKWUQ",

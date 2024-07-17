@@ -17,11 +17,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import juro.exampleserver.dto.bookmark.BookmarkDto;
+import juro.exampleserver.service.bookmark.model.BookmarkDto;
 import juro.exampleserver.exception.ClientException;
 import juro.exampleserver.exception.ErrorCode;
 import juro.exampleserver.repository.bookmark.Bookmark;
 import juro.exampleserver.repository.bookmark.BookmarkRepository;
+import juro.exampleserver.service.product.ProductValidator;
+import juro.exampleserver.service.bookmark.BookmarkService;
+import juro.exampleserver.service.user.UserValidator;
 
 @ActiveProfiles("local")
 @ExtendWith({SpringExtension.class})
