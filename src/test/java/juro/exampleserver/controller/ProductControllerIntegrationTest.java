@@ -16,11 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 
-import juro.exampleserver.config.DebuggingAuth;
-import juro.exampleserver.controller.model.common.ApiResponse;
-import juro.exampleserver.controller.model.common.PageResponse;
-import juro.exampleserver.controller.model.product.ProductCreateRequest;
-import juro.exampleserver.controller.model.product.ProductResponse;
+import juro.exampleserver.config.auth.DebuggingAuth;
+import juro.exampleserver.controller.common.ApiResponse;
+import juro.exampleserver.controller.common.PageResponse;
+import juro.exampleserver.controller.product.model.ProductCreateRequest;
+import juro.exampleserver.controller.product.model.ProductResponse;
 import juro.exampleserver.repository.product.Product;
 import juro.exampleserver.repository.product.ProductRepository;
 import juro.exampleserver.repository.product.ProductStatus;

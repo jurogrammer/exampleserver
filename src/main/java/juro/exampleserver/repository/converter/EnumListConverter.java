@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import juro.exampleserver.dto.user.UserRole;
+import juro.exampleserver.repository.user.model.UserRole;
 
 @Converter
 public class EnumListConverter implements AttributeConverter<List<UserRole>, String> {
